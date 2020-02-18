@@ -26,6 +26,8 @@ public class SunsetFragment extends Fragment {
     private int mSunsetSkyColor;
     private int mNightSkyColor;
 
+    private static boolean mReverse = false;
+
     public static SunsetFragment newInstance() {
         return new SunsetFragment();
     }
@@ -64,29 +66,54 @@ public class SunsetFragment extends Fragment {
         float sunYStart = mSunView.getTop();
         float sunYEnd = mSkyView.getHeight();
 
-        ObjectAnimator heightAnimator = ObjectAnimator
-                .ofFloat(mSunView, "y", sunYStart, sunYEnd)
-                .setDuration(3000);
-        heightAnimator.setInterpolator(new AccelerateInterpolator());
+        if (mReverse) {
+            ObjectAnimator heightAnimator = ObjectAnimator
+                    .ofFloat(mSunView, "y", sunYEnd, sunYStart)
+                    .setDuration(3000);
+            heightAnimator.setInterpolator(new AccelerateInterpolator());
 
-        ObjectAnimator sunsetSkyAnimator = ObjectAnimator
-                .ofInt(mSkyView, "backgroundColor", mBlueSkyColor, mSunsetSkyColor)
-                .setDuration(3000);
-        sunsetSkyAnimator.setEvaluator(new ArgbEvaluator());
 
-        ObjectAnimator nightSkyAnimator = ObjectAnimator
-                .ofInt(mSkyView, "backgroundColor", mSunsetSkyColor, mNightSkyColor)
-                .setDuration(1500);
-        nightSkyAnimator.setEvaluator(new ArgbEvaluator());
+            ObjectAnimator sunsetSkyAnimator = ObjectAnimator
+                    .ofInt(mSkyView, "backgroundColor", mSunsetSkyColor, mBlueSkyColor)
+                    .setDuration(3000);
+            sunsetSkyAnimator.setEvaluator(new ArgbEvaluator());
 
-//        heightAnimator.start();
-//        sunsetSkyAnimator.start();
+            ObjectAnimator nightSkyAnimator = ObjectAnimator
+                    .ofInt(mSkyView, "backgroundColor", mNightSkyColor, mSunsetSkyColor)
+                    .setDuration(1500);
+            nightSkyAnimator.setEvaluator(new ArgbEvaluator());
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet
-                .play(heightAnimator)
-                .with(sunsetSkyAnimator)
-                .before(nightSkyAnimator);
-        animatorSet.start();
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet
+                    .play(heightAnimator)
+                    .with(sunsetSkyAnimator)
+                    .after(nightSkyAnimator);
+            animatorSet.start();
+
+        } else {
+            ObjectAnimator heightAnimator = ObjectAnimator
+                    .ofFloat(mSunView, "y", sunYStart, sunYEnd)
+                    .setDuration(3000);
+            heightAnimator.setInterpolator(new AccelerateInterpolator());
+
+            ObjectAnimator sunsetSkyAnimator = ObjectAnimator
+                    .ofInt(mSkyView, "backgroundColor", mBlueSkyColor, mSunsetSkyColor)
+                    .setDuration(3000);
+            sunsetSkyAnimator.setEvaluator(new ArgbEvaluator());
+
+            ObjectAnimator nightSkyAnimator = ObjectAnimator
+                    .ofInt(mSkyView, "backgroundColor", mSunsetSkyColor, mNightSkyColor)
+                    .setDuration(1500);
+            nightSkyAnimator.setEvaluator(new ArgbEvaluator());
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet
+                    .play(heightAnimator)
+                    .with(sunsetSkyAnimator)
+                    .before(nightSkyAnimator);
+            animatorSet.start();
+        }
+
+        mReverse = !mReverse;
     }
 }
